@@ -17,9 +17,9 @@ function Navbar() {
             max-sm:text-sm
             "
       >
-        <span className="text-lg hover:font-bold ">iTask</span>
+        <span className="text-lg font-bold">iTasks</span>
 
-        <ul className="list-none flex gap-5 
+        <ul className="list-none flex gap-5
             /* Mobile Styles */
             max-sm:flex-col 
             max-sm:items-center /* Centers the links in the stack */
