@@ -4,6 +4,7 @@ import "./App.css";
 
 // importing components
 import Navbar from "./components/Navbar";
+import Todo from "./components/Todo";
 
 function App() {
 	return (
@@ -39,7 +40,7 @@ function App() {
 						gap-2
 					"
 				>
-					<h2 className="max-sm:text-sm font-semibold max-sm:font-medium">
+					<h2 className="max-sm:text-sm text-xl font-semibold max-sm:font-medium">
 						Add a Todo
 					</h2>
 
@@ -74,6 +75,7 @@ function App() {
 							name="txt-todo"
 							id="txt-todo"
 							placeholder="Enter your task..."
+							maxlength="40"
 						/>
 
 						<button
@@ -110,6 +112,12 @@ function App() {
 				</div>
 
 				<hr className="w-full border-gray-400" />
+
+				<h2 className="max-sm:text-sm text-xl font-semibold max-sm:font-medium">Your Todos</h2>
+
+				<Todo/>
+				<Todo/>
+				<Todo/>
 			</main>
 		</>
 	);

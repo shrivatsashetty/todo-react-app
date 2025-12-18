@@ -25,10 +25,10 @@ function Navbar() {
             max-sm:items-center /* Centers the links in the stack */
             max-sm:gap-2        /* Reduces gap between links on mobile */
             ">
-          <li className="hover:font-bold transition-[font-weight] duration-300 ease-in-out">
+          <li className="font-light hover:font-bold transition-[font-weight] duration-300 ease-in-out">
             <a href="#">Home</a>
           </li>
-          <li className="hover:font-bold transition-[font-weight] duration-300 ease-in-out">
+          <li className="font-light hover:font-bold transition-[font-weight] duration-300 ease-in-out">
             <a href="#">YourTasks</a>
           </li>
         </ul>
