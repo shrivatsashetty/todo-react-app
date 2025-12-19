@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import "./App.css";
 
@@ -7,6 +7,53 @@ import Navbar from "./components/Navbar";
 import Todo from "./components/Todo";
 
 function App() {
+	const [todos, setToDos] = useState([]);
+
+	useEffect(() => {
+		if (localStorage.todos) {
+			let tasks = localStorage.getItem("todos");
+			setToDos(JSON.parse(tasks));
+		} else {
+			localStorage.setItem("todos", JSON.stringify([]));
+			setToDos([]);
+		}
+	}, []);
+
+	const inputTodo = useRef();
+
+	function saveTodo(e) {
+
+		e.preventDefault();
+
+		const value = inputTodo.current.value.trim();
+		if (!value) {
+			alert("Please Enter a Todo!");
+			return;
+		}
+
+		const newTodo = {
+			id: todos.length + 1,
+			content: value,
+			isCompleted: false,
+		};
+
+		const updatedTodos = [...todos, newTodo];
+
+		setToDos(updatedTodos);
+		localStorage.setItem("todos", JSON.stringify(updatedTodos));
+
+		inputTodo.current.value = "";
+	}
+
+	// function to handle checkbox to do completed status
+	function toggleTodoCompletion(id) {
+		const updatedTodos = todos.map((todo) =>
+			todo.id === id ? { ...todo, isCompleted: !todo.isCompleted } : todo
+		);
+		setToDos(updatedTodos);
+		localStorage.setItem("todos", JSON.stringify(updatedTodos));
+	}
+
 	return (
 		<>
 			<Navbar />
@@ -23,6 +70,7 @@ function App() {
 					flex
 					flex-col
 					gap-4
+					h-[80vh]
 				"
 			>
 				<h1 className="font-bold text-2xl max-sm:text-base text-center">
@@ -56,6 +104,7 @@ function App() {
 						"
 					>
 						<input
+							ref={inputTodo}
 							className="
 								bg-white
 								rounded-full
@@ -75,11 +124,12 @@ function App() {
 							name="txt-todo"
 							id="txt-todo"
 							placeholder="Enter your task..."
-							maxlength="40"
+							maxLength="35"
 						/>
 
 						<button
 							type="submit"
+							onClick={saveTodo}
 							className="
 								bg-purple-500
 								text-white
@@ -113,11 +163,24 @@ function App() {
 
 				<hr className="w-full border-gray-400" />
 
-				<h2 className="max-sm:text-sm text-xl font-semibold max-sm:font-medium">Your Todos</h2>
+				<h2 className="max-sm:text-sm text-xl font-semibold max-sm:font-medium">
+					Your Todos
+				</h2>
 
-				<Todo/>
-				<Todo/>
-				<Todo/>
+				<div className="todos h-[50%] overflow-y-scroll">
+					<ul className="flex flex-col gap-1.5">
+						{todos.map((todo) => (
+							<li key={todo.id}>
+								<Todo
+									id={todo.id}
+									content={todo.content}
+									isCompleted={todo.isCompleted}
+									onToggle={toggleTodoCompletion}
+								/>
+							</li>
+						))}
+					</ul>
+				</div>
 			</main>
 		</>
 	);

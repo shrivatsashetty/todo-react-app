@@ -1,4 +1,4 @@
-function Todo() {
+function Todo({ id, content, isCompleted, onToggle }) {
 	return (
 		<div
 			className="
@@ -15,11 +15,15 @@ function Todo() {
 				<input
 					type="checkbox"
 					name="chk-done"
-					id="chk-done"
 					className="mt-1"
+					checked={isCompleted}
+					onChange={() => onToggle(id)}
 				/>
-				<p className="text-base max-sm:text-sm">
-					Get Milk and Vegetables from the market
+				<p
+					className={`text-base max-sm:text-sm 
+						${isCompleted ? "line-through text-gray-500" : ""}`}
+				>
+					{content}
 				</p>
 			</div>
 
@@ -29,6 +33,7 @@ function Todo() {
 					todo-controls
 					flex
 					gap-2
+					mx-2
 					max-sm:flex-col
 					max-sm:w-full
 				"
