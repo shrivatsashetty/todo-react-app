@@ -9,6 +9,7 @@ import Todo from "./components/Todo";
 function App() {
 	const [todos, setToDos] = useState([]);
 	const [currentTodoId, setCurrentTodoId] = useState("");
+	const [showFinishedTodods, setShowFinishedTodods] = useState(false)
 
 	useEffect(() => {
 		if (localStorage.todos) {
@@ -20,14 +21,15 @@ function App() {
 		}
 	}, []);
 
-	const inputTodo = useRef();
+	const txtInputTodo = useRef();
+	const chkShowFinished = useRef();
 
 	function saveTodo(e) {
 		e.preventDefault();
 
-		const todoContent = inputTodo.current.value.trim();
+		const todoContent = txtInputTodo.current.value.trim();
 		if (!todoContent) {
-			alert("Please Enter a Todo!");
+			alert("Please Enter Todo Content!!");
 			return
 		}
 
@@ -56,7 +58,7 @@ function App() {
 
 		localStorage.setItem("todos", JSON.stringify(updatedTodos)); // update the local storage accordingly
 
-		inputTodo.current.value = "";
+		txtInputTodo.current.value = "";
 	}
 
 	// function to handle checkbox to do completed status
@@ -73,11 +75,25 @@ function App() {
 		localStorage.setItem("todos", JSON.stringify(filteredTodos)); // set the new todo list to local storage
 		setToDos(filteredTodos); // update the state variable
 	}
-
-	function editTodo(id) {
+	
+	function editTodo(e, id) {
+		// console.log(e.target);
 		const toBeEditedTodo = todos.find((todo) => todo.id === id);
 		setCurrentTodoId(toBeEditedTodo.id);
-		inputTodo.current.value = toBeEditedTodo.content; // send the content to be edited to the text input
+		txtInputTodo.current.value = toBeEditedTodo.content; // send the content to be edited to the text input
+	}
+
+	function showFinishedTodosChanged() {
+		const showFinished = chkShowFinished.current.checked;
+		
+		if(showFinished) {
+			setShowFinishedTodods(true)
+			return;
+		}
+
+		setShowFinishedTodods(false);
+		return;
+		
 	}
 
 	return (
@@ -130,7 +146,7 @@ function App() {
 						"
 					>
 						<input
-							ref={inputTodo}
+							ref={txtInputTodo}
 							className="
 								bg-white
 								rounded-full
@@ -180,6 +196,8 @@ function App() {
 
 				<div className="show-finished flex items-center gap-2 max-sm:text-sm">
 					<input
+						ref={chkShowFinished}
+						onChange={showFinishedTodosChanged}
 						type="checkbox"
 						name="chk-show-finished"
 						id="chk-show-finished"
@@ -204,6 +222,7 @@ function App() {
 									onToggle={todoCompletionChanged}
 									onDelete={deleteTodo}
 									onEdit={editTodo}
+									showCompleted={showFinishedTodods}
 								/>
 							</li>
 						))}
