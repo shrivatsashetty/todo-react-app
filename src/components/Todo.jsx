@@ -1,4 +1,4 @@
-function Todo({ id, content, isCompleted, onToggle }) {
+function Todo({ id, content, isCompleted, onToggle, onDelete }) {
 	return (
 		<div
 			className="
@@ -34,6 +34,7 @@ function Todo({ id, content, isCompleted, onToggle }) {
 					flex
 					gap-2
 					mx-2
+					max-sm:mx-0
 					max-sm:flex-col
 					max-sm:w-full
 				"
@@ -41,6 +42,7 @@ function Todo({ id, content, isCompleted, onToggle }) {
 				<button
 					type="button"
 					className="
+						btn-edit-todo
 						bg-purple-500
 						text-white
 						px-3
@@ -65,7 +67,9 @@ function Todo({ id, content, isCompleted, onToggle }) {
 
 				<button
 					type="button"
+					onClick={() => {onDelete(id)}}
 					className="
+						btn-delete-todo
 						bg-purple-500
 						text-white
 						px-3

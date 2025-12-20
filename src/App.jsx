@@ -22,18 +22,17 @@ function App() {
 	const inputTodo = useRef();
 
 	function saveTodo(e) {
-
 		e.preventDefault();
 
-		const value = inputTodo.current.value.trim();
-		if (!value) {
+		const todoContent = inputTodo.current.value.trim();
+		if (!todoContent) {
 			alert("Please Enter a Todo!");
 			return;
 		}
 
 		const newTodo = {
-			id: todos.length + 1,
-			content: value,
+			id: crypto.randomUUID(), // the window.crypto object can be used to generat cryptographically secure version 4 UUID
+			content: todoContent,
 			isCompleted: false,
 		};
 
@@ -52,6 +51,11 @@ function App() {
 		);
 		setToDos(updatedTodos);
 		localStorage.setItem("todos", JSON.stringify(updatedTodos));
+	}
+
+	function deleteTodo(id) {
+		const filteredTodos = todos.filter( (todo) => todo.id != id );
+		setToDos(filteredTodos);
 	}
 
 	return (
@@ -176,6 +180,7 @@ function App() {
 									content={todo.content}
 									isCompleted={todo.isCompleted}
 									onToggle={toggleTodoCompletion}
+									onDelete={deleteTodo}
 								/>
 							</li>
 						))}
