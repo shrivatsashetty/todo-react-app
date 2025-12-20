@@ -8,6 +8,7 @@ import Todo from "./components/Todo";
 
 function App() {
 	const [todos, setToDos] = useState([]);
+	const [currentTodoId, setCurrentTodoId] = useState("");
 
 	useEffect(() => {
 		if (localStorage.todos) {
@@ -27,25 +28,39 @@ function App() {
 		const todoContent = inputTodo.current.value.trim();
 		if (!todoContent) {
 			alert("Please Enter a Todo!");
-			return;
+			return
 		}
 
-		const newTodo = {
-			id: crypto.randomUUID(), // the window.crypto object can be used to generat cryptographically secure version 4 UUID
-			content: todoContent,
-			isCompleted: false,
-		};
+		let updatedTodos = [];
+		// logic to check whether to create a new todo or update an existing one
+		if (currentTodoId) {
+			
+			updatedTodos = todos.map((todo) =>
+				todo.id === currentTodoId
+					? { ...todo, content: todoContent }
+					: todo
+			);
 
-		const updatedTodos = [...todos, newTodo];
+		} 
+		else {
+			const newTodo = {
+				id: crypto.randomUUID(), // the window.crypto object can be used to generat cryptographically secure version 4 UUID
+				content: todoContent,
+				isCompleted: false,
+			};
+
+			updatedTodos = [...todos, newTodo];
+		}
 
 		setToDos(updatedTodos);
-		localStorage.setItem("todos", JSON.stringify(updatedTodos));
+
+		localStorage.setItem("todos", JSON.stringify(updatedTodos)); // update the local storage accordingly
 
 		inputTodo.current.value = "";
 	}
 
 	// function to handle checkbox to do completed status
-	function toggleTodoCompletion(id) {
+	function todoCompletionChanged(id) {
 		const updatedTodos = todos.map((todo) =>
 			todo.id === id ? { ...todo, isCompleted: !todo.isCompleted } : todo
 		);
@@ -54,8 +69,15 @@ function App() {
 	}
 
 	function deleteTodo(id) {
-		const filteredTodos = todos.filter( (todo) => todo.id != id );
-		setToDos(filteredTodos);
+		const filteredTodos = todos.filter((todo) => todo.id !== id);
+		localStorage.setItem("todos", JSON.stringify(filteredTodos)); // set the new todo list to local storage
+		setToDos(filteredTodos); // update the state variable
+	}
+
+	function editTodo(id) {
+		const toBeEditedTodo = todos.find((todo) => todo.id === id);
+		setCurrentTodoId(toBeEditedTodo.id);
+		inputTodo.current.value = toBeEditedTodo.content; // send the content to be edited to the text input
 	}
 
 	return (
@@ -171,7 +193,7 @@ function App() {
 					Your Todos
 				</h2>
 
-				<div className="todos h-[50%] overflow-y-scroll">
+				<div className="todos max-h-[50%] overflow-y-scroll">
 					<ul className="flex flex-col gap-1.5">
 						{todos.map((todo) => (
 							<li key={todo.id}>
@@ -179,8 +201,9 @@ function App() {
 									id={todo.id}
 									content={todo.content}
 									isCompleted={todo.isCompleted}
-									onToggle={toggleTodoCompletion}
+									onToggle={todoCompletionChanged}
 									onDelete={deleteTodo}
+									onEdit={editTodo}
 								/>
 							</li>
 						))}

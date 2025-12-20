@@ -1,4 +1,4 @@
-function Todo({ id, content, isCompleted, onToggle, onDelete }) {
+function Todo({ id, content, isCompleted, onToggle, onDelete, onEdit }) {
 	return (
 		<div
 			className="
@@ -33,14 +33,14 @@ function Todo({ id, content, isCompleted, onToggle, onDelete }) {
 					todo-controls
 					flex
 					gap-2
-					mx-2
-					max-sm:mx-0
+					sm:mx-2
 					max-sm:flex-col
 					max-sm:w-full
 				"
 			>
 				<button
 					type="button"
+					onClick={() => {onEdit(id)}}
 					className="
 						btn-edit-todo
 						bg-purple-500
