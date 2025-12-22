@@ -9,7 +9,7 @@ import Todo from "./components/Todo";
 function App() {
 	const [todos, setToDos] = useState([]);
 	const [currentTodoId, setCurrentTodoId] = useState("");
-	const [showFinishedTodods, setShowFinishedTodods] = useState(false)
+	const [showFinishedTodos, setShowFinishedTodos] = useState(false);
 
 	useEffect(() => {
 		if (localStorage.todos) {
@@ -30,21 +30,20 @@ function App() {
 		const todoContent = txtInputTodo.current.value.trim();
 		if (!todoContent) {
 			alert("Please Enter Todo Content!!");
-			return
+			return;
 		}
 
 		let updatedTodos = [];
 		// logic to check whether to create a new todo or update an existing one
 		if (currentTodoId) {
-			
 			updatedTodos = todos.map((todo) =>
 				todo.id === currentTodoId
 					? { ...todo, content: todoContent }
 					: todo
 			);
 
-		} 
-		else {
+			setCurrentTodoId(""); // Clear the editing state after saving
+		} else {
 			const newTodo = {
 				id: crypto.randomUUID(), // the window.crypto object can be used to generat cryptographically secure version 4 UUID
 				content: todoContent,
@@ -75,26 +74,36 @@ function App() {
 		localStorage.setItem("todos", JSON.stringify(filteredTodos)); // set the new todo list to local storage
 		setToDos(filteredTodos); // update the state variable
 	}
-	
-	function editTodo(e, id) {
-		// console.log(e.target);
+
+	function editTodo(id) {
 		const toBeEditedTodo = todos.find((todo) => todo.id === id);
-		setCurrentTodoId(toBeEditedTodo.id);
-		txtInputTodo.current.value = toBeEditedTodo.content; // send the content to be edited to the text input
+		setCurrentTodoId(toBeEditedTodo.id); // Set this todo as being edited
+		txtInputTodo.current.value = toBeEditedTodo.content;
+		txtInputTodo.current.focus(); // Focus input for better UX
+	}
+
+	function cancelEdit() {
+		setCurrentTodoId(""); // Clear editing state
+		txtInputTodo.current.value = ""; // Clear input
 	}
 
 	function showFinishedTodosChanged() {
 		const showFinished = chkShowFinished.current.checked;
-		
-		if(showFinished) {
-			setShowFinishedTodods(true)
-			return;
-		}
-
-		setShowFinishedTodods(false);
-		return;
-		
+		setShowFinishedTodos(showFinished);
 	}
+
+	// Filter todos based on editing state and show finished checkbox
+	const displayedTodos = todos.filter((todo) => {
+		// Hide todo being edited
+		if (currentTodoId && todo.id === currentTodoId) {
+			return false;
+		}
+		// If "Show Finished" is checked, show only completed todos
+		if (showFinishedTodos && !todo.isCompleted) {
+			return false;
+		}
+		return true;
+	});
 
 	return (
 		<>
@@ -120,6 +129,7 @@ function App() {
 				</h1>
 
 				<form
+					onSubmit={saveTodo}
 					className="
 						font-bold
 						text-lg
@@ -131,7 +141,7 @@ function App() {
 					"
 				>
 					<h2 className="max-sm:text-sm text-xl font-semibold max-sm:font-medium">
-						Add a Todo
+						{currentTodoId ? "Edit Todo" : "Add a Todo"}
 					</h2>
 
 					<div
@@ -171,7 +181,6 @@ function App() {
 
 						<button
 							type="submit"
-							onClick={saveTodo}
 							className="
 								bg-purple-500
 								text-white
@@ -191,6 +200,31 @@ function App() {
 						>
 							Save
 						</button>
+
+						<button
+							type="button" // specifies, this is not a submit button
+							onClick={cancelEdit}
+							className="
+									bg-purple-500
+									text-white
+									px-3
+									py-1
+									rounded-full
+									flex
+									items-center
+									justify-center
+									cursor-pointer
+									whitespace-nowrap
+									text-base
+									font-semibold
+									max-sm:text-sm
+									max-sm:font-medium
+									hover:bg-gray-600
+									transition-colors
+								"
+						>
+							Cancel
+						</button>
 					</div>
 				</form>
 
@@ -202,7 +236,13 @@ function App() {
 						name="chk-show-finished"
 						id="chk-show-finished"
 					/>
-					<label htmlFor="chk-show-finished">Show Finished</label>
+
+					<label
+						htmlFor="chk-show-finished"
+						className="cursor-pointer"
+					>
+						Show Finished
+					</label>
 				</div>
 
 				<hr className="w-full border-gray-400" />
@@ -212,21 +252,31 @@ function App() {
 				</h2>
 
 				<div className="todos max-h-[50%] overflow-y-scroll">
-					<ul className="flex flex-col gap-1.5">
-						{todos.map((todo) => (
-							<li key={todo.id}>
-								<Todo
-									id={todo.id}
-									content={todo.content}
-									isCompleted={todo.isCompleted}
-									onToggle={todoCompletionChanged}
-									onDelete={deleteTodo}
-									onEdit={editTodo}
-									showCompleted={showFinishedTodods}
-								/>
-							</li>
-						))}
-					</ul>
+					{displayedTodos.length === 0 ? (
+						<p className="text-center text-gray-600 mt-4 text-sm">
+							{/* below we can see the chaining of two ternary operators */}
+							{currentTodoId
+								? "Editing todo above..."
+								: (showFinishedTodos
+								? "No completed todos yet!"
+								: "No todos yet. Add one above!")}
+						</p>
+					) : (
+						<ul className="flex flex-col gap-1.5">
+							{displayedTodos.map((todo) => (
+								<li key={todo.id}>
+									<Todo
+										id={todo.id}
+										content={todo.content}
+										isCompleted={todo.isCompleted}
+										onToggle={todoCompletionChanged}
+										onDelete={deleteTodo}
+										onEdit={editTodo}
+									/>
+								</li>
+							))}
+						</ul>
+					)}
 				</div>
 			</main>
 		</>

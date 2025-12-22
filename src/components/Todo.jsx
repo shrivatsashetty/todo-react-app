@@ -1,39 +1,21 @@
 import { useEffect, useState } from "react";
 
-function Todo({ id, content, isCompleted, onToggle, onDelete, onEdit, showCompleted }) {
-
-	const [isTodoHidden, setIsTodoHidden] = useState(false);
-
-	useEffect(
-		() => {
-			console.log("First Render");
-		},
-		[]
-	);
-
-	useEffect(
-		() => {
-			console.log("Todo component rendered");
-		}
-	);
+function Todo({ id, content, isCompleted, onToggle, onDelete, onEdit }) {
 
 	return (
 		<div
-			className={`
+			className="
 				todo-holder
 				flex
 				justify-between
 				items-start
 				gap-3
 				max-sm:flex-col
-
-				{ ${ (showCompleted && !isCompleted) ? "hidden": ""} }
-			`}
+			"
 		>
 			{/* Todo text */}
-			<div className={`todo flex gap-3 items-start `}
-			
-			>
+			<div className="todo flex gap-3 items-start">
+
 				<input
 					type="checkbox"
 					name="chk-done"
@@ -41,6 +23,7 @@ function Todo({ id, content, isCompleted, onToggle, onDelete, onEdit, showComple
 					checked={isCompleted}
 					onChange={() => onToggle(id)}
 				/>
+
 				<p
 					className={`text-base max-sm:text-sm 
 							${isCompleted ? "line-through text-gray-500" : ""}
@@ -63,11 +46,7 @@ function Todo({ id, content, isCompleted, onToggle, onDelete, onEdit, showComple
 			>
 				<button
 					type="button"
-					onClick={(e) => {
-							setIsTodoHidden(!isTodoHidden);
-							onEdit(e, id);
-						}
-					}
+					onClick={() => onEdit(id)}
 					className="
 						btn-edit-todo
 						bg-purple-500
@@ -87,6 +66,8 @@ function Todo({ id, content, isCompleted, onToggle, onDelete, onEdit, showComple
 						max-sm:text-xs
 						max-sm:font-normal
 						max-sm:w-full
+						hover:bg-purple-600
+						transition-colors
 					"
 				>
 					Edit
@@ -114,6 +95,8 @@ function Todo({ id, content, isCompleted, onToggle, onDelete, onEdit, showComple
 						max-sm:text-xs
 						max-sm:font-normal
 						max-sm:w-full
+						hover:bg-red-600
+						transition-colors
 					"
 				>
 					Delete
