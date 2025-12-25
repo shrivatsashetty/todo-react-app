@@ -1,3 +1,4 @@
+/* eslint-disable react/react-in-jsx-scope */
 import { useState, useEffect, useRef } from "react";
 
 import "./App.css";
@@ -5,11 +6,13 @@ import "./App.css";
 // importing components
 import Navbar from "./components/Navbar";
 import Todo from "./components/Todo";
+import Modal from "./components/Modal";
 
 function App() {
 	const [todos, setToDos] = useState([]);
 	const [currentTodoId, setCurrentTodoId] = useState("");
 	const [showFinishedTodos, setShowFinishedTodos] = useState(false);
+	const [isModalOpen, setIsModalOpen] = useState(false)
 
 	useEffect(() => {
 		if (localStorage.todos) {
@@ -29,7 +32,7 @@ function App() {
 
 		const todoContent = txtInputTodo.current.value.trim();
 		if (!todoContent) {
-			alert("Please Enter Todo Content!!");
+			setIsModalOpen(true);
 			return;
 		}
 
@@ -108,6 +111,9 @@ function App() {
 	return (
 		<>
 			<Navbar />
+
+			<Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}/>
+
 
 			<main
 				className="

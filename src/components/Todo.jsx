@@ -1,4 +1,6 @@
-import { useEffect, useState } from "react";
+/* eslint-disable react/prop-types */
+/* eslint-disable react/react-in-jsx-scope */
+
 
 function Todo({ id, content, isCompleted, onToggle, onDelete, onEdit }) {
 
